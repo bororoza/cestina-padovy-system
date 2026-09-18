@@ -1,0 +1,6 @@
+{
+  "name": "Čeština na úrovni",
+  "description": "Interaktivní výuka české pádové gramatiky pro zkoušku A2 k trvalému pobytu v ČR podle metodiky Čeština na úrovni.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
