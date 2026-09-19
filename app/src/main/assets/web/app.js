@@ -8,6 +8,86 @@ let speechRate = 1.0;
 let score = parseInt(localStorage.getItem('czech_score') || '0', 10);
 let exercisesAnswered = parseInt(localStorage.getItem('czech_exercises') || '0', 10);
 
+// English Explanations for all Czech Cases
+const ENGLISH_CASE_INFO = {
+  "1": {
+    "englishName": "1st Case: Nominative (Subject)",
+    "englishUsage": "Used for the subject of a sentence (who or what performs the action) and the standard dictionary form of words. Answers 'Who?' (Kdo?) or 'What?' (Co?).",
+    "englishKeyRules": [
+      "Masculine Animate (Ma): hard adjective ends in -ý (nový student), noun ends in consonant.",
+      "Masculine Inanimate (Mi): hard adjective ends in -ý (nový hrad), noun ends in consonant.",
+      "Feminine (F): hard adjective ends in -á (nová žena), noun ends in -a (nebo -e / konsonant).",
+      "Neuter (N): hard adjective ends in -é (nové město), noun ends in -o / -e."
+    ],
+    "englishTip": "Always use Nominative when stating who or what is doing something: 'Nový student studuje češtinu' (The new student studies Czech)."
+  },
+  "2": {
+    "englishName": "2nd Case: Genitive (Possession, Origin, Absence & Quantity)",
+    "englishUsage": "Expresses 'of', possession, quantity, absence, and answers 'Whose?' or 'Of whom/what?' (Koho? Čeho?). Essential for prepositions: do (into/to), od (from), z (out of), bez (without), u (at/near), vedle (next to), během (during).",
+    "englishKeyRules": [
+      "Masculine Animate & Inanimate: adjectives end in -ého (nového) or -ího. Nouns end in -a (bratra, sýra) or -u (hradu, obchodu).",
+      "Feminine: hard adjectives end in -é (nové). Hard nouns ending in -a turn into -y (ženy, kávy).",
+      "Neuter: adjectives end in -ého (nového). Hard nouns end in -a (města, auta).",
+      "Used after numbers from 5 upwards: e.g., 'pět studentů', 'deset korun'."
+    ],
+    "englishTip": "Whenever going TO a place (city, country, building), use DO + Genitive: 'Jdu do nového obchodu' (I am going into the new shop)."
+  },
+  "3": {
+    "englishName": "3rd Case: Dative (Indirect Object / Beneficiary)",
+    "englishUsage": "Indicates the receiver, recipient, or beneficiary ('to someone', 'for someone'). Answers 'To whom/what?' (Komu? Čemu?). Used with verbs like děkovat (thank), pomáhat (help), rozumět (understand), and prepositions k/ke (towards), díky (thanks to), proti (against), kvůli (due to).",
+    "englishKeyRules": [
+      "Masculine (Ma & Mi): hard adjectives end in -ému (novému). Male persons (Ma) take the distinctive -ovi ending (panu Novákovi, lékaři).",
+      "Feminine: hard adjectives end in -é (nové). Nouns end in -ě/-e, often with consonant palatalization (k->c: matka -> matce; r->ř: sestra -> sestře).",
+      "Neuter: adjectives end in -ému (novému). Nouns end in -u (městu) or -i (moři).",
+      "Personal expressions: 'Je mi dobře' (I feel well), 'Chutná mi to' (It tastes good to me)."
+    ],
+    "englishTip": "Think of Dative as the 'giving and helping' case. Whenever you give, help, explain, or say something to a person, that person goes into the Dative."
+  },
+  "4": {
+    "englishName": "4th Case: Accusative (Direct Object)",
+    "englishUsage": "The most vital case for daily conversation! Represents the direct object receiving the action. Answers 'Whom/What do you see, have, want, or buy?' (Koho? Co?). Follows transitive verbs (mít, vidět, znát, hledat, kupovat) and motion prepositions (na, pro, za, o, v).",
+    "englishKeyRules": [
+      "Masculine Animate (Ma): matches the Genitive form! Adjective -ého (nového), noun -a (bratra, kolegu).",
+      "Masculine Inanimate (Mi): matches the Nominative form! Adjective -ý (nový), noun unchanged (hrad, byt).",
+      "Feminine: changes distinctly to -ou for adjectives (novou) and -u for nouns ending in -a (ženu, kávu).",
+      "Neuter: matches the Nominative form! Adjective -é (nové), noun -o (město, auto)."
+    ],
+    "englishTip": "A2 Exam Golden Rule: Feminine nouns change to -u with -ou adjective ('Mám novou práci'). Masculine animate takes Genitive ending ('Vidím pana doktora')."
+  },
+  "5": {
+    "englishName": "5th Case: Vocative (Direct Address & Greetings)",
+    "englishUsage": "Used exclusively when calling, greeting, or addressing people directly by name or title. Crucial for polite spoken etiquette, writing formal emails, and addressing friends.",
+    "englishKeyRules": [
+      "Masculine names & titles: take -e, -u, or -i (pan -> pane!, doktor -> doktore!, Petr -> Petře!, Tomáš -> Tomáši!).",
+      "Feminine names: ending in -a shift to -o (Eva -> Evo!, Petra -> Petro!, paní Nováková stays unchanged).",
+      "Neuter & inanimate: practically not used in modern everyday speech."
+    ],
+    "englishTip": "Never begin an email with 'Dobrý den pan Novák'! Proper Czech always uses Vocative: 'Dobrý den, pane Nováku!' or 'Milá Evo!'."
+  },
+  "6": {
+    "englishName": "6th Case: Locative (Location & Subject Matter)",
+    "englishUsage": "The ONLY case that NEVER stands alone—it ALWAYS requires a preposition! Answers 'Where?' (Kde?) or 'About whom/what?' ((O) kom? (O) čem?). Used with prepositions: v/ve (in/at), na (on/at), o (about), po (after/along), při (during).",
+    "englishKeyRules": [
+      "Masculine (Ma & Mi): hard adjectives end in -ém (novém). Living persons take -ovi (o Petrovi). Inanimate nouns end in -e/-ě/-u (v domě, na stole, v hotelu).",
+      "Feminine: hard adjectives end in -é (nové). Hard nouns end in -e/-ě (v Praze, v lékárně), with consonant shifts (k->c, h->z, ch->š).",
+      "Neuter: adjectives end in -ém (novém). Nouns end in -ě/-e (v autě, v kině).",
+      "Answers 'Kde?' (static location) vs. Accusative 'Kam?' (movement towards)."
+    ],
+    "englishTip": "Locative tells where you are right now or what you are talking about: 'Bydlím v Praze' (I live in Prague), 'Mluvíme o nové práci' (We are talking about the new job)."
+  },
+  "7": {
+    "englishName": "7th Case: Instrumental (Means, Transport & Accompaniment)",
+    "englishUsage": "Expresses the tool, instrument, or means of transport ('by train', 'with a pen') or accompaniment with preposition 's/se' (with someone/something). Prepositions: s/se (with), před (in front of/before), za (behind), pod (under), nad (above), mezi (between).",
+    "englishKeyRules": [
+      "Masculine Animate & Inanimate: hard adjectives end in -ým (novým). Nouns end in -em (vlakem, autem, bratrem).",
+      "Feminine: hard adjectives end in -ou (novou). Hard nouns end in -ou (ženou, kávou).",
+      "Neuter: hard adjectives end in -ým (novým). Nouns end in -em (autem, mořem).",
+      "Means of transport takes NO preposition: 'Jedu autem' (by car), 'Cestuji vlakem' (by train). Accompaniment with people uses 's': 's kamarádem' (with a friend)."
+    ],
+    "englishTip": "Do not put 's' before transportation! Say 'Jedu vlakem' (no preposition). Only add 's/se' when you mean 'together with': 'Jdu na kávu s kamarádem'."
+  }
+};
+
 // Grammar Data for Table
 const CASES_DATA = {
   1: {
@@ -2142,8 +2222,18 @@ function selectCase(caseNum) {
 
 function renderCaseDetail() {
   const data = CASES_DATA[currentCase];
+  const en = ENGLISH_CASE_INFO[currentCase] || {};
   const container = document.getElementById("case-detail-container");
   if (!container || !data) return;
+
+  let rulesListHtml = "";
+  if (en.englishKeyRules && en.englishKeyRules.length > 0) {
+    rulesListHtml = "<ul style='margin-left: 18px; margin-top: 6px; font-size: 12.5px; color: #37474F; line-height: 1.5;'>";
+    en.englishKeyRules.forEach(r => {
+      rulesListHtml += `<li>${r}</li>`;
+    });
+    rulesListHtml += "</ul>";
+  }
 
   let tableHtml = `
     <div style="margin-bottom: 12px;">
@@ -2151,8 +2241,24 @@ function renderCaseDetail() {
       <div style="font-size: 14px; font-weight: 700; color: #37474F;">Otázka: <span style="color: var(--secondary);">${data.question}</span></div>
       <p style="font-size: 13px; color: #555; margin-top: 4px;">${data.usage}</p>
       
+      <!-- English Explanation Box -->
+      <div style="background: #E8F4FD; border: 1.5px solid #90CAF9; border-radius: 10px; padding: 12px; margin: 12px 0;">
+        <div style="display: flex; align-items: center; gap: 6px; font-weight: 800; font-size: 13.5px; color: #0D47A1; margin-bottom: 4px;">
+          <span>🇬🇧</span>
+          <span>${en.englishName || "English Guide"}</span>
+        </div>
+        <p style="font-size: 12.5px; color: #1565C0; line-height: 1.4; margin-bottom: 6px;">
+          <strong>Function & Meaning:</strong> ${en.englishUsage || ""}
+        </p>
+        <div style="font-size: 12px; font-weight: 700; color: #0D47A1; margin-top: 6px;">Key Endings & Rules:</div>
+        ${rulesListHtml}
+        <div style="margin-top: 8px; background: #FFFFFF; border-left: 3px solid #1976D2; padding: 6px 10px; border-radius: 4px; font-size: 12px; color: #0D47A1; font-weight: 600;">
+          💡 <em>Pro-tip:</em> ${en.englishTip || ""}
+        </div>
+      </div>
+
       <div style="background: #F3E5F5; border-left: 4px solid var(--primary); padding: 8px 12px; margin: 10px 0; border-radius: 4px; font-size: 13px; font-weight: 600;">
-        Příklad: "${data.example}"
+        Příklad / Example: "${data.example}"
         <button class="speak-btn" onclick="speakCzech('${data.example.replace(/'/g, "\\x27")}')">🔊 Přehrát</button>
       </div>
     </div>
@@ -2161,10 +2267,10 @@ function renderCaseDetail() {
       <table class="grammar-table">
         <thead>
           <tr>
-            <th>Rod</th>
-            <th>Přídavné jméno</th>
-            <th>Podstatné jméno</th>
-            <th>Poznámka</th>
+            <th>Rod / Gender</th>
+            <th>Přídavné jméno (Adj.)</th>
+            <th>Podstatné jméno (Noun)</th>
+            <th>Poznámka / Note</th>
           </tr>
         </thead>
         <tbody>

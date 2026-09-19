@@ -38,7 +38,7 @@ fun CzechCasesApp(
     val isSlowMode by viewModel.speechHelper.isSlowMode.collectAsState()
 
     var showProfileDialog by remember { mutableStateOf(false) }
-    var isWebMode by remember { mutableStateOf(true) }
+    var isWebMode by remember { mutableStateOf(false) }
 
     if (isWebMode) {
         Box(modifier = Modifier.fillMaxSize()) {
