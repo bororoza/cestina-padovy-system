@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Čeština na úrovni</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Application Bar -->
+  <header>
+    <div class="brand-wrapper">
+      <img src="brand_logo.jpg" alt="Logo" class="brand-logo" onerror="this.style.display='none'">
+      <div>
+        <div class="brand-title">Čeština na úrovni ✨</div>
+        <div class="brand-subtitle">Web & HTML5 A2 Systém</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="speedBtn" class="action-pill" onclick="toggleSpeed()">⚡ 1.0x</button>
+    </div>
+  </header>
+
+  <!-- Content Container -->
+  <main>
+    
+    <!-- TAB 1: TABULKA PÁDŮ -->
+    <section id="tab-table" class="tab-content active">
+      <div class="hero-banner-container">
+        <img src="notebook.jpg" alt="Studijní sešit" class="hero-banner-img">
+        <div class="hero-overlay-tag">
+          <span>📖</span>
+          <span>Studijní sešit pádů</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 style="font-size: 16px; font-weight: 800; margin-bottom: 10px;">Přehled koncovek podle pádů</h2>
+        
+        <!-- Case selection pills -->
+        <div class="case-pills">
+          <div class="case-pill active" onclick="selectCase(1)">1. Nominativ</div>
+          <div class="case-pill" onclick="selectCase(2)">2. Genitiv</div>
+          <div class="case-pill" onclick="selectCase(3)">3. Dativ</div>
+          <div class="case-pill" onclick="selectCase(4)">4. Akuzativ</div>
+          <div class="case-pill" onclick="selectCase(5)">5. Vokativ</div>
+          <div class="case-pill" onclick="selectCase(6)">6. Lokál</div>
+          <div class="case-pill" onclick="selectCase(7)">7. Instrumentál</div>
+        </div>
+
+        <div id="case-detail-container">
+          <!-- Dynamically populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: PROCVIČOVÁNÍ (QUIZ) -->
+    <section id="tab-practice" class="tab-content">
+      <div class="card" id="practice-card">
+        <!-- Dynamically populated by JS -->
+      </div>
+    </section>
+
+    <!-- TAB 3: AUDIO LAB -->
+    <section id="tab-audio" class="tab-content">
+      <div class="card">
+        <h2 style="font-size: 16px; font-weight: 800; margin-bottom: 12px; color: var(--primary);">🎧 Hlasový trenažér (Audio Lab)</h2>
+        <p style="font-size: 13px; color: #555; margin-bottom: 16px;">
+          Poslouchejte správnou výslovnost klíčových vzorových vět pro zkoušku A2 na trvalý pobyt:
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <div style="background: #F5F5F5; padding: 12px; border-radius: 10px; border: 1px solid var(--border);">
+            <div style="font-weight: 700; font-size: 14px;">"Bydlím v novém bytě s kamarádem."</div>
+            <div style="font-size: 12px; color: #666; margin: 4px 0;">6. pád (v bytě) + 7. pád (s kamarádem)</div>
+            <button class="speak-btn" onclick="speakCzech('Bydlím v novém bytě s kamarádem.')">🔊 Přehrát</button>
+          </div>
+
+          <div style="background: #F5F5F5; padding: 12px; border-radius: 10px; border: 1px solid var(--border);">
+            <div style="font-weight: 700; font-size: 14px;">"Dám ten dárek své milé sestře."</div>
+            <div style="font-size: 12px; color: #666; margin: 4px 0;">3. pád (komu? čemu? Dativ F)</div>
+            <button class="speak-btn" onclick="speakCzech('Dám ten dárek své milé sestře.')">🔊 Přehrát</button>
+          </div>
+
+          <div style="background: #F5F5F5; padding: 12px; border-radius: 10px; border: 1px solid var(--border);">
+            <div style="font-weight: 700; font-size: 14px;">"Potřebuji vidět pana doktora Nováka."</div>
+            <div style="font-size: 12px; color: #666; margin: 4px 0;">4. pád (Akuzativ Ma = Genitiv)</div>
+            <button class="speak-btn" onclick="speakCzech('Potřebuji vidět pana doktora Nováka.')">🔊 Přehrát</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: PŘEDLOŽKY A CHECKLIST -->
+    <section id="tab-checklist" class="tab-content">
+      <div class="card">
+        <h2 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">📋 Pravidla a předložky pro zkoušku A2</h2>
+        
+        <div class="checklist-item">
+          <input type="checkbox" id="c1" checked>
+          <div>
+            <div class="checklist-title">2. Pád (Genitiv)</div>
+            <div class="checklist-desc">Předložky: do, od, z, bez, u, vedle, během</div>
+          </div>
+        </div>
+
+        <div class="checklist-item">
+          <input type="checkbox" id="c2" checked>
+          <div>
+            <div class="checklist-title">3. Pád (Dativ)</div>
+            <div class="checklist-desc">Předložky: k/ke, díky, proti, naproti, kvůli</div>
+          </div>
+        </div>
+
+        <div class="checklist-item">
+          <input type="checkbox" id="c3" checked>
+          <div>
+            <div class="checklist-title">4. Pád (Akuzativ)</div>
+            <div class="checklist-desc">Předložky: na, pro, za, o, v (pohyb, cíl)</div>
+          </div>
+        </div>
+
+        <div class="checklist-item">
+          <input type="checkbox" id="c4" checked>
+          <div>
+            <div class="checklist-title">6. Pád (Lokál)</div>
+            <div class="checklist-desc">VŽDY s předložkou: v/ve, na, o, po, při</div>
+          </div>
+        </div>
+
+        <div class="checklist-item">
+          <input type="checkbox" id="c5" checked>
+          <div>
+            <div class="checklist-title">7. Pád (Instrumentál)</div>
+            <div class="checklist-desc">Předložky: s/se, před, za, pod, nad, mezi</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 5: MŮJ POKROK -->
+    <section id="tab-stats" class="tab-content">
+      <div class="card">
+        <h2 style="font-size: 16px; font-weight: 800; margin-bottom: 12px; color: var(--primary);">📊 Váš studijní pokrok</h2>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: center; margin-top: 16px;">
+          <div style="background: var(--primary-light); padding: 16px; border-radius: 12px; border: 1.5px solid var(--primary);">
+            <div id="stat-score" style="font-size: 28px; font-weight: 900; color: var(--primary);">0</div>
+            <div style="font-size: 12px; font-weight: 700; color: var(--dark); margin-top: 4px;">Získaných bodů</div>
+          </div>
+          <div style="background: var(--secondary-light); padding: 16px; border-radius: 12px; border: 1.5px solid var(--secondary);">
+            <div id="stat-count" style="font-size: 28px; font-weight: 900; color: var(--secondary);">0</div>
+            <div style="font-size: 12px; font-weight: 700; color: var(--dark); margin-top: 4px;">Vyřešených úloh</div>
+          </div>
+        </div>
+        <div style="margin-top: 20px; background: #FFF9C4; border: 1px solid var(--gold); padding: 12px; border-radius: 10px; font-size: 13px;">
+          💡 <strong>Tip pro zkoušku:</strong> Trvalý pobyt A2 vyžaduje spolehlivou znalost koncovek u podstatných a přídavných jmen ve 4. a 6. pádu.
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <div id="nav-table" class="nav-item active" onclick="switchTab('table')">
+      <div class="nav-icon">📊</div>
+      <span>Tabulka</span>
+    </div>
+    <div id="nav-practice" class="nav-item" onclick="switchTab('practice')">
+      <div class="nav-icon">✍️</div>
+      <span>Cvičení</span>
+    </div>
+    <div id="nav-audio" class="nav-item" onclick="switchTab('audio')">
+      <div class="nav-icon">🎧</div>
+      <span>Audio Lab</span>
+    </div>
+    <div id="nav-checklist" class="nav-item" onclick="switchTab('checklist')">
+      <div class="nav-icon">📋</div>
+      <span>Předložky</span>
+    </div>
+    <div id="nav-stats" class="nav-item" onclick="switchTab('stats')">
+      <div class="nav-icon">📈</div>
+      <span>Pokrok</span>
+    </div>
+  </nav>
+
+  <script src="app.js"></script>
+</body>
+</html>

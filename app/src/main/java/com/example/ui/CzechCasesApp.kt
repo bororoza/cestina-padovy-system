@@ -38,6 +38,49 @@ fun CzechCasesApp(
     val isSlowMode by viewModel.speechHelper.isSlowMode.collectAsState()
 
     var showProfileDialog by remember { mutableStateOf(false) }
+    var isWebMode by remember { mutableStateOf(true) }
+
+    if (isWebMode) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            WebViewScreen()
+            
+            // Switch button to switch back to Native Compose if needed
+            Surface(
+                shape = RoundedCornerShape(20.dp),
+                color = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f),
+                border = androidx.compose.foundation.BorderStroke(1.dp, BrandMagentaPrimary),
+                shadowElevation = 4.dp,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 10.dp, end = 12.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "🌐 Web verze",
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = BrandMagentaPrimary
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    IconButton(
+                        onClick = { isWebMode = false },
+                        modifier = Modifier.size(24.dp).testTag("toggle_native_mode_button")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.SwapHoriz,
+                            contentDescription = "Přepnout na nativní zobrazení",
+                            tint = BrandMagentaPrimary,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+            }
+        }
+        return
+    }
 
     Scaffold(
         topBar = {
@@ -84,6 +127,30 @@ fun CzechCasesApp(
                     }
                 },
                 actions = {
+                    // Switch to Web HTML/JS view
+                    IconButton(
+                        onClick = { isWebMode = true },
+                        modifier = Modifier.testTag("switch_to_web_button")
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(10.dp),
+                            color = BrandMagentaContainer,
+                            border = androidx.compose.foundation.BorderStroke(1.dp, BrandMagentaPrimary)
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(horizontal = 7.dp, vertical = 5.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "🌐 Web",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = BrandMagentaPrimary
+                                )
+                            }
+                        }
+                    }
+
                     // Audio Speed Quick Toggle
                     IconButton(
                         onClick = { viewModel.toggleSlowSpeech() },
