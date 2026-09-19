@@ -64,6 +64,9 @@ fun WebViewScreen() {
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
+                // Set software rendering layer if GPU rendernode is unavailable in headless/emulator environments
+                setLayerType(android.view.View.LAYER_TYPE_SOFTWARE, null)
+
                 webChromeClient = WebChromeClient()
                 webViewClient = WebViewClient()
 
