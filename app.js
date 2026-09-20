@@ -2165,7 +2165,6 @@ function selectPracticeCase(cNum) {
     pill.classList.toggle("active", pillNum === cNum);
   });
   renderQuestion();
-  renderPrepQuestion();
 }
 
 // Audio synthesis
@@ -2209,13 +2208,19 @@ function switchTab(tabId) {
 
   if (tabId === "stats") {
     updateStatsDisplay();
+  } else if (tabId === "checklist") {
+    renderPrepQuestion();
+  } else if (tabId === "practice") {
+    renderQuestion();
+  } else if (tabId === "table") {
+    renderCaseDetail();
   }
 }
 
 // Render Table
 function selectCase(caseNum) {
   currentCase = caseNum;
-  document.querySelectorAll(".case-pill").forEach((pill, idx) => {
+  document.querySelectorAll("#tab-table .case-pill").forEach((pill, idx) => {
     pill.classList.toggle("active", (idx + 1) === caseNum);
   });
   renderCaseDetail();
@@ -2388,15 +2393,6 @@ function updateStatsDisplay() {
   if (countEl) countEl.innerText = exercisesAnswered;
 }
 
-// Initialization on load
-document.addEventListener("DOMContentLoaded", () => {
-  renderCaseDetail();
-  renderQuestion();
-  renderPrepQuestion();
-  updateStatsDisplay();
-});
-
-// ==========================================
 // PREPOSITION QUIZ LOGIC (15 questions per case, 3 choices, 1 correct)
 // ==========================================
 const PREPOSITION_QUESTIONS = {
@@ -3679,3 +3675,14 @@ function nextPrepQuestion() {
   currentPrepIndex = (currentPrepIndex + 1) % list.length;
   renderPrepQuestion();
 }
+
+
+// Initialization on load
+document.addEventListener("DOMContentLoaded", () => {
+  renderCaseDetail();
+  renderQuestion();
+  renderPrepQuestion();
+  updateStatsDisplay();
+});
+
+// ==========================================
