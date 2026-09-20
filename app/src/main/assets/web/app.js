@@ -2165,6 +2165,7 @@ function selectPracticeCase(cNum) {
     pill.classList.toggle("active", pillNum === cNum);
   });
   renderQuestion();
+  renderPrepQuestion();
 }
 
 // Audio synthesis
@@ -2391,5 +2392,1290 @@ function updateStatsDisplay() {
 document.addEventListener("DOMContentLoaded", () => {
   renderCaseDetail();
   renderQuestion();
+  renderPrepQuestion();
   updateStatsDisplay();
 });
+
+// ==========================================
+// PREPOSITION QUIZ LOGIC (15 questions per case, 3 choices, 1 correct)
+// ==========================================
+const PREPOSITION_QUESTIONS = {
+  "1": [
+    {
+      "prompt": "___ nový soused se včera přistěhoval do našeho domu.",
+      "options": [
+        "Tento",
+        "K",
+        "O"
+      ],
+      "correct": 0,
+      "explanation": "Podmět věty vyžaduje 1. pád (Nominativ) bez předložky. 'Tento' je ukazovací zájmeno v nominativu, předložky 'k' ani 'o' se s 1. pádem nepojí.",
+      "prep": "Tento"
+    },
+    {
+      "prompt": "___ známý lékař ordinuje každé úterý.",
+      "options": [
+        "Váš",
+        "Bez",
+        "Do"
+      ],
+      "correct": 0,
+      "explanation": "Kdo ordinuje? Podmět věty v 1. pádě (Nominativ): 'Váš známý lékař'. Předložky 'bez' (2. pád) ani 'do' (2. pád) zde nelze použít.",
+      "prep": "Váš"
+    },
+    {
+      "prompt": "Petr pracuje ___ programátor ve velké mezinárodní firmě.",
+      "options": [
+        "jako",
+        "k",
+        "při"
+      ],
+      "correct": 0,
+      "explanation": "Spojka / částice 'jako' se v tomto typu přirovnání a profesního zařazení pojí s 1. pádem (Nominativ): 'jako programátor'.",
+      "prep": "jako"
+    },
+    {
+      "prompt": "___ moderní nemocnice se nachází v centru města.",
+      "options": [
+        "Tato",
+        "Z",
+        "U"
+      ],
+      "correct": 0,
+      "explanation": "Podmět věty (Co se nachází?) je v 1. pádě: 'Tato moderní nemocnice'. Předložky 'z' a 'u' vyžadují 2. pád.",
+      "prep": "Tato"
+    },
+    {
+      "prompt": "Moje sestra pracuje ___ učitelka na základní škole.",
+      "options": [
+        "jako",
+        "od",
+        "pro"
+      ],
+      "correct": 0,
+      "explanation": "Profese po 'jako' zůstává v 1. pádě (Nominativ): 'pracuje jako učitelka'.",
+      "prep": "jako"
+    },
+    {
+      "prompt": "___ červené auto stojí před naším domem.",
+      "options": [
+        "To",
+        "Do",
+        "V"
+      ],
+      "correct": 0,
+      "explanation": "Podmět věty v 1. pádě rodu středního: 'To červené auto'.",
+      "prep": "To"
+    },
+    {
+      "prompt": "Pan Novák nastoupil ___ ředitel nové pobočky.",
+      "options": [
+        "jako",
+        "k",
+        "přes"
+      ],
+      "correct": 0,
+      "explanation": "Spojení 'nastoupit jako + 1. pád': 'jako ředitel'.",
+      "prep": "jako"
+    },
+    {
+      "prompt": "___ dobrá kamarádka mi vždy ochotně pomůže.",
+      "options": [
+        "Moje",
+        "U",
+        "Bez"
+      ],
+      "correct": 0,
+      "explanation": "Kdo mi pomůže? Podmět je v 1. pádě (Nominativ): 'Moje dobrá kamarádka'.",
+      "prep": "Moje"
+    },
+    {
+      "prompt": "Tento člověk vystupuje ___ odborník na českou gramatiku.",
+      "options": [
+        "jako",
+        "ze",
+        "při"
+      ],
+      "correct": 0,
+      "explanation": "Po 'jako' následuje tvar 1. pádu: 'jako odborník'.",
+      "prep": "jako"
+    },
+    {
+      "prompt": "___ český jazyk je pro cizince velmi zajímavý.",
+      "options": [
+        "Tento",
+        "Do",
+        "O"
+      ],
+      "correct": 0,
+      "explanation": "Podmět věty: 'Tento český jazyk' (1. pád).",
+      "prep": "Tento"
+    },
+    {
+      "prompt": "Praha slouží ___ hlavní město České republiky.",
+      "options": [
+        "jako",
+        "proti",
+        "pod"
+      ],
+      "correct": 0,
+      "explanation": "Funkce vyjádřená 'jako + 1. pád': 'jako hlavní město'.",
+      "prep": "jako"
+    },
+    {
+      "prompt": "___ nová studentka mluví výborně česky i anglicky.",
+      "options": [
+        "Naše",
+        "Od",
+        "K"
+      ],
+      "correct": 0,
+      "explanation": "Podmět věty v 1. pádě rodu ženského: 'Naše nová studentka'.",
+      "prep": "Naše"
+    },
+    {
+      "prompt": "Karel se osvědčil ___ spolehlivý vedoucí týmu.",
+      "options": [
+        "jako",
+        "bez",
+        "do"
+      ],
+      "correct": 0,
+      "explanation": "Vazba 'osvědčit se jako + 1. pád': 'jako spolehlivý vedoucí'.",
+      "prep": "jako"
+    },
+    {
+      "prompt": "___ historické centrum je zapsáno na seznamu UNESCO.",
+      "options": [
+        "Celé",
+        "Z",
+        "V"
+      ],
+      "correct": 0,
+      "explanation": "Podmět v 1. pádě: 'Celé historické centrum'.",
+      "prep": "Celé"
+    },
+    {
+      "prompt": "Můj syn vystudoval a teď pracuje ___ zubař.",
+      "options": [
+        "jako",
+        "u",
+        "s"
+      ],
+      "correct": 0,
+      "explanation": "Profese: 'pracuje jako zubař' (1. pád Nominativ).",
+      "prep": "jako"
+    }
+  ],
+  "2": [
+    {
+      "prompt": "Zítra odpoledne jdeme ___ nového divadla.",
+      "options": [
+        "do",
+        "k",
+        "na"
+      ],
+      "correct": 0,
+      "explanation": "Předložka DO se pojí výhradně s 2. pádem (Genitiv) a vyjadřuje směr dovnitř: 'do nového divadla'.",
+      "prep": "do"
+    },
+    {
+      "prompt": "Dostal jsem krásný dopis ___ své babičky.",
+      "options": [
+        "od",
+        "k",
+        "pro"
+      ],
+      "correct": 0,
+      "explanation": "Předložka OD vyžaduje 2. pád (Genitiv) vyjadřující původce: 'od své babičky'.",
+      "prep": "od"
+    },
+    {
+      "prompt": "Piju kávu zásadně ___ cukru a mléka.",
+      "options": [
+        "bez",
+        "s",
+        "pro"
+      ],
+      "correct": 0,
+      "explanation": "Předložka BEZ se pojí s 2. pádem (Genitiv) a vyjadřuje absenci: 'bez cukru a mléka'.",
+      "prep": "bez"
+    },
+    {
+      "prompt": "Vrátili jsme se pozdě večer ___ práce domů.",
+      "options": [
+        "z",
+        "v",
+        "do"
+      ],
+      "correct": 0,
+      "explanation": "Předložka Z/ZE vyžaduje 2. pád (Genitiv) při směru odkud (z povrchu/prostoru): 'z práce'.",
+      "prep": "z"
+    },
+    {
+      "prompt": "Celé odpoledne jsme čekali ___ zubního lékaře.",
+      "options": [
+        "u",
+        "k",
+        "o"
+      ],
+      "correct": 0,
+      "explanation": "Předložka U se pojí s 2. pádem (Genitiv) a znamená 'u koho': 'u zubního lékaře'.",
+      "prep": "u"
+    },
+    {
+      "prompt": "Nová lékárna stojí hned ___ velké pošty.",
+      "options": [
+        "vedle",
+        "k",
+        "před"
+      ],
+      "correct": 0,
+      "explanation": "Předložka VEDLE vyžaduje 2. pád (Genitiv): 'vedle velké pošty'.",
+      "prep": "vedle"
+    },
+    {
+      "prompt": "___ letních prázdnin plánujeme cestu do Španělska.",
+      "options": [
+        "Během",
+        "Při",
+        "V"
+      ],
+      "correct": 0,
+      "explanation": "Předložka BĚHEM se pojí s 2. pádem (Genitiv) pro časový úsek: 'během letních prázdnin'.",
+      "prep": "Během"
+    },
+    {
+      "prompt": "Bydlíme jen kousek ___ stanice metra.",
+      "options": [
+        "blízko",
+        "naproti",
+        "v"
+      ],
+      "correct": 0,
+      "explanation": "Předložka BLÍZKO se pojí s 2. pádem (Genitiv): 'blízko stanice metra'.",
+      "prep": "blízko"
+    },
+    {
+      "prompt": "Každé ráno jezdím tramvají ___ naší staré školy.",
+      "options": [
+        "kolem",
+        "přes",
+        "s"
+      ],
+      "correct": 0,
+      "explanation": "Předložka KOLEM vyžaduje 2. pád (Genitiv): 'kolem naší staré školy'.",
+      "prep": "kolem"
+    },
+    {
+      "prompt": "Nemůžu najít brýle, nemohu číst ___ nich.",
+      "options": [
+        "bez",
+        "k",
+        "pro"
+      ],
+      "correct": 0,
+      "explanation": "Předložka BEZ + Genitiv zájmena: 'bez nich'.",
+      "prep": "bez"
+    },
+    {
+      "prompt": "Maminka se právě vrátila ___ nákupu v supermarketu.",
+      "options": [
+        "z",
+        "do",
+        "k"
+      ],
+      "correct": 0,
+      "explanation": "Předložka Z + 2. pád: 'z nákupu'.",
+      "prep": "z"
+    },
+    {
+      "prompt": "Obchod je otevřen ___ pondělí do pátku.",
+      "options": [
+        "od",
+        "z",
+        "k"
+      ],
+      "correct": 0,
+      "explanation": "Časový interval 'OD pondělí (2. pád) do pátku (2. pád)'.",
+      "prep": "od"
+    },
+    {
+      "prompt": "Rodiče odjeli na dovolenou ___ České republiky.",
+      "options": [
+        "do",
+        "k",
+        "na"
+      ],
+      "correct": 0,
+      "explanation": "Cíl cesty do státu: 'DO České republiky' (2. pád Genitiv).",
+      "prep": "do"
+    },
+    {
+      "prompt": "Byli jsme na návštěvě ___ našich dobrých známých.",
+      "options": [
+        "u",
+        "k",
+        "o"
+      ],
+      "correct": 0,
+      "explanation": "Lokalita u osob: 'U našich dobrých známých' (2. pád Genitiv).",
+      "prep": "u"
+    },
+    {
+      "prompt": "Musím koupit dárek ___ bratra k narozeninám.",
+      "options": [
+        "od",
+        "pro",
+        "do"
+      ],
+      "correct": 0,
+      "explanation": "Pozor: pokud se ptáme 'od koho je dárek', užijeme 'OD bratra' (2. pád).",
+      "prep": "od"
+    }
+  ],
+  "3": [
+    {
+      "prompt": "V pátek odpoledne jdu na kontrolu ___ zubnímu lékaři.",
+      "options": [
+        "k",
+        "do",
+        "u"
+      ],
+      "correct": 0,
+      "explanation": "Předložka K/KE se pojí výhradně s 3. pádem (Dativ) při směru k osobě či cíli: 'k zubnímu lékaři'.",
+      "prep": "k"
+    },
+    {
+      "prompt": "Zkoušku z češtiny jsem složil ___ tvé skvělé pomoci.",
+      "options": [
+        "díky",
+        "pro",
+        "kvůli"
+      ],
+      "correct": 0,
+      "explanation": "Předložka DÍKY se pojí s 3. pádem (Dativ) s pozitivním významem: 'díky tvé skvělé pomoci'.",
+      "prep": "díky"
+    },
+    {
+      "prompt": "Tento lék je velmi účinný ___ silné bolesti hlavy.",
+      "options": [
+        "proti",
+        "bez",
+        "před"
+      ],
+      "correct": 0,
+      "explanation": "Předložka PROTI vyžaduje 3. pád (Dativ): 'proti silné bolesti'.",
+      "prep": "proti"
+    },
+    {
+      "prompt": "Naše nová restaurace leží přímo ___ městskému divadlu.",
+      "options": [
+        "naproti",
+        "vedle",
+        "blízko"
+      ],
+      "correct": 0,
+      "explanation": "Předložka NAPROTI se pojí s 3. pádem (Dativ): 'naproti městskému divadlu'.",
+      "prep": "naproti"
+    },
+    {
+      "prompt": "Vlak měl zpoždění ___ špatnému počasí a sněhu.",
+      "options": [
+        "kvůli",
+        "díky",
+        "pro"
+      ],
+      "correct": 0,
+      "explanation": "Předložka KVŮLI vyžaduje 3. pád (Dativ) u negativních příčin: 'kvůli špatnému počasí'.",
+      "prep": "kvůli"
+    },
+    {
+      "prompt": "O víkendu jedeme na návštěvu ___ babičce na venkov.",
+      "options": [
+        "k",
+        "u",
+        "do"
+      ],
+      "correct": 0,
+      "explanation": "Předložka K + Dativ vyjadřuje směřování k osobě: 'k babičce'.",
+      "prep": "k"
+    },
+    {
+      "prompt": "Přišel jsem na schůzku pozdě ___ dopravní zácpě.",
+      "options": [
+        "kvůli",
+        "díky",
+        "bez"
+      ],
+      "correct": 0,
+      "explanation": "Předložka KVŮLI + 3. pád: 'kvůli dopravní zácpě'.",
+      "prep": "kvůli"
+    },
+    {
+      "prompt": "Běželi jsme rychle ___ východu z metra.",
+      "options": [
+        "k",
+        "do",
+        "v"
+      ],
+      "correct": 0,
+      "explanation": "Směr k místu/bodu s 3. pádem: 'k východu'.",
+      "prep": "k"
+    },
+    {
+      "prompt": "Projekt jsme dokončili včas jen ___ moderní technologii.",
+      "options": [
+        "díky",
+        "pro",
+        "kvůli"
+      ],
+      "correct": 0,
+      "explanation": "Zásluha / pozitivní důvod s Dativem: 'díky moderní technologii'.",
+      "prep": "díky"
+    },
+    {
+      "prompt": "Hlasovali jsme všichni ___ tomuto novému návrhu.",
+      "options": [
+        "proti",
+        "bez",
+        "od"
+      ],
+      "correct": 0,
+      "explanation": "Předložka PROTI + 3. pád (Dativ): 'proti tomuto návrhu'.",
+      "prep": "proti"
+    },
+    {
+      "prompt": "Auto zaparkovalo přímo ___ našemu domu.",
+      "options": [
+        "naproti",
+        "u",
+        "vedle"
+      ],
+      "correct": 0,
+      "explanation": "Předložka NAPROTI + Dativ (našemu domu): 'naproti našemu domu'.",
+      "prep": "naproti"
+    },
+    {
+      "prompt": "Můj syn má velký respekt ___ starším lidem.",
+      "options": [
+        "k",
+        "o",
+        "pro"
+      ],
+      "correct": 0,
+      "explanation": "Vazba 'respekt K někomu' vyžaduje Dativ (3. pád): 'k starším lidem'.",
+      "prep": "k"
+    },
+    {
+      "prompt": "Nemohl jsem spát ___ nepříjemnému hluku na ulici.",
+      "options": [
+        "kvůli",
+        "pro",
+        "bez"
+      ],
+      "correct": 0,
+      "explanation": "Předložka KVŮLI + Dativ: 'kvůli nepříjemnému hluku'.",
+      "prep": "kvůli"
+    },
+    {
+      "prompt": "___ laskavému přístupu sestřičky se pacient uklidnil.",
+      "options": [
+        "Díky",
+        "Bez",
+        "Z"
+      ],
+      "correct": 0,
+      "explanation": "Předložka DÍKY + 3. pád: 'Díky laskavému přístupu'.",
+      "prep": "Díky"
+    },
+    {
+      "prompt": "Musím jít zítra ___ své právničce podepsat smlouvu.",
+      "options": [
+        "k",
+        "u",
+        "do"
+      ],
+      "correct": 0,
+      "explanation": "Směr k osobě: 'jít K právničce' (3. pád Dativ).",
+      "prep": "k"
+    }
+  ],
+  "4": [
+    {
+      "prompt": "Mám koupený krásný dárek ___ svou manželku.",
+      "options": [
+        "pro",
+        "k",
+        "o"
+      ],
+      "correct": 0,
+      "explanation": "Předložka PRO se pojí výhradně se 4. pádem (Akuzativ): 'pro svou manželku'.",
+      "prep": "pro"
+    },
+    {
+      "prompt": "V sobotu odpoledne jdeme ___ fotbalový stadion.",
+      "options": [
+        "na",
+        "v",
+        "u"
+      ],
+      "correct": 0,
+      "explanation": "Směr na otevřené prostranství / akci se 4. pádem: 'na fotbalový stadion' (Kam? Akuzativ).",
+      "prep": "na"
+    },
+    {
+      "prompt": "Děkuji vám mnohokrát ___ vaši ochotu a čas.",
+      "options": [
+        "za",
+        "pro",
+        "k"
+      ],
+      "correct": 0,
+      "explanation": "Vazba 'děkovat ZA něco' vyžaduje 4. pád (Akuzativ): 'za vaši ochotu'.",
+      "prep": "za"
+    },
+    {
+      "prompt": "Musíme přejít opatrně ___ tuto rušnou ulici.",
+      "options": [
+        "přes",
+        "kolem",
+        "po"
+      ],
+      "correct": 0,
+      "explanation": "Předložka PŘES se pojí se 4. pádem (Akuzativ) při přechodu: 'přes tuto rušnou ulici'.",
+      "prep": "přes"
+    },
+    {
+      "prompt": "V pátek odjíždíme na víkend ___ hory.",
+      "options": [
+        "na",
+        "do",
+        "v"
+      ],
+      "correct": 0,
+      "explanation": "Cíl cesty na hory: 'na hory' (4. pád Akuzativ).",
+      "prep": "na"
+    },
+    {
+      "prompt": "Přihlásil jsem se ___ intenzivní kurz češtiny.",
+      "options": [
+        "na",
+        "do",
+        "k"
+      ],
+      "correct": 0,
+      "explanation": "Vazba 'přihlásit se NA co' (Akuzativ): 'na intenzivní kurz'.",
+      "prep": "na"
+    },
+    {
+      "prompt": "Tento dopis je důležitý ___ pana ředitele.",
+      "options": [
+        "pro",
+        "k",
+        "za"
+      ],
+      "correct": 0,
+      "explanation": "Určení příjemce: předložka PRO + 4. pád (Ma = Genitiv): 'pro pana ředitele'.",
+      "prep": "pro"
+    },
+    {
+      "prompt": "Zaplatil jsem ___ nový oběd kartou.",
+      "options": [
+        "za",
+        "pro",
+        "na"
+      ],
+      "correct": 0,
+      "explanation": "Platba 'platit ZA co' (4. pád): 'za nový oběd'.",
+      "prep": "za"
+    },
+    {
+      "prompt": "Cestou domů jsme museli jet ___ dlouhý tunel.",
+      "options": [
+        "přes",
+        "v",
+        "po"
+      ],
+      "correct": 0,
+      "explanation": "Průchod / přejezd: předložka PŘES + 4. pád: 'přes dlouhý tunel'.",
+      "prep": "přes"
+    },
+    {
+      "prompt": "Každý večer se dívám ___ televizní zprávy.",
+      "options": [
+        "na",
+        "o",
+        "v"
+      ],
+      "correct": 0,
+      "explanation": "Vazba 'dívat se NA co' (4. pád Akuzativ): 'na televizní zprávy'.",
+      "prep": "na"
+    },
+    {
+      "prompt": "Rodiče mají velkou starost ___ své děti.",
+      "options": [
+        "o",
+        "na",
+        "pro"
+      ],
+      "correct": 0,
+      "explanation": "Vazba 'starost O koho/co' se 4. pádem: 'o své děti'.",
+      "prep": "o"
+    },
+    {
+      "prompt": "Koupil jsem kávu s sebou ___ našeho kolegu.",
+      "options": [
+        "pro",
+        "k",
+        "za"
+      ],
+      "correct": 0,
+      "explanation": "Určeno pro někoho: PRO + 4. pád: 'pro našeho kolegu'.",
+      "prep": "pro"
+    },
+    {
+      "prompt": "Polož tu těžkou knihu ___ stůl, prosím.",
+      "options": [
+        "na",
+        "v",
+        "u"
+      ],
+      "correct": 0,
+      "explanation": "Pohyb/položení (Kam?): NA + 4. pád: 'polož na stůl'.",
+      "prep": "na"
+    },
+    {
+      "prompt": "Vyměnil jsem starý telefon ___ moderní model.",
+      "options": [
+        "za",
+        "pro",
+        "k"
+      ],
+      "correct": 0,
+      "explanation": "Výměna 'vyměnit ZA co' (4. pád): 'za moderní model'.",
+      "prep": "za"
+    },
+    {
+      "prompt": "Turisté se šli podívat ___ Karlův most.",
+      "options": [
+        "na",
+        "v",
+        "do"
+      ],
+      "correct": 0,
+      "explanation": "Vazba 'jít se podívat NA co' (4. pád): 'na Karlův most'.",
+      "prep": "na"
+    }
+  ],
+  "5": [
+    {
+      "prompt": "Dobrý den, ___ doktore, potřebuji recept na léky.",
+      "options": [
+        "pane",
+        "panu",
+        "panem"
+      ],
+      "correct": 0,
+      "explanation": "Při oslovení se v 5. pádě (Vokativ) užívá tvar 'pane': 'pane doktore'.",
+      "prep": "pane"
+    },
+    {
+      "prompt": "Vážený ___, děkujeme za Vaši registraci.",
+      "options": [
+        "pane Nováku",
+        "pan Novák",
+        "panu Novákovi"
+      ],
+      "correct": 0,
+      "explanation": "V oficiálním oslovení se používá 5. pád (Vokativ): 'Vážený pane Nováku'.",
+      "prep": "pane Nováku"
+    },
+    {
+      "prompt": "Ahoj ___, jak se dneska máš?",
+      "options": [
+        "Petře",
+        "Petr",
+        "Petrovi"
+      ],
+      "correct": 0,
+      "explanation": "Přátelské oslovení vyžaduje 5. pád (Vokativ) se změnou r->ř: 'Petře!'.",
+      "prep": "Petře"
+    },
+    {
+      "prompt": "Milá ___, srdečně tě zvu na oslavu narozenin.",
+      "options": [
+        "Evo",
+        "Eva",
+        "Evu"
+      ],
+      "correct": 0,
+      "explanation": "Ženská jména na -a mají v 5. pádě (Vokativ) koncovku -o: 'Milá Evo!'.",
+      "prep": "Evo"
+    },
+    {
+      "prompt": "Dobrý den, paní ___, přišla vám nová zásilka.",
+      "options": [
+        "Černá",
+        "Černou",
+        "Černé"
+      ],
+      "correct": 0,
+      "explanation": "Příjmení typu přídavného jména v oslovení žen: 'paní Černá' (5. pád).",
+      "prep": "Černá"
+    },
+    {
+      "prompt": "Prosím tě, ___, podej mi ten slovník.",
+      "options": [
+        "Pavle",
+        "Pavel",
+        "Pavlovi"
+      ],
+      "correct": 0,
+      "explanation": "Vokativ jména Pavel: 'Pavle!'.",
+      "prep": "Pavle"
+    },
+    {
+      "prompt": "Vážená paní ___, dovolte mi poděkovat za spolupráci.",
+      "options": [
+        "ředitelko",
+        "ředitelka",
+        "ředitelku"
+      ],
+      "correct": 0,
+      "explanation": "Oslovení funkce v 5. pádě pro ženy: 'paní ředitelko'.",
+      "prep": "ředitelko"
+    },
+    {
+      "prompt": "Ahoj ___, zítra se uvidíme ve škole.",
+      "options": [
+        "Tomáši",
+        "Tomáš",
+        "Tomášem"
+      ],
+      "correct": 0,
+      "explanation": "Jména zakončená na měkkou souhlásku mají ve Vokativu -i: 'Tomáši!'.",
+      "prep": "Tomáši"
+    },
+    {
+      "prompt": "Haló, pane ___, zapomněl jste si tady tašku!",
+      "options": [
+        "sousedem",
+        "soused",
+        "sousede"
+      ],
+      "correct": 2,
+      "explanation": "Oslovení v 5. pádě tvrdého vzoru: 'pane sousede!'.",
+      "prep": "sousede"
+    },
+    {
+      "prompt": "Milý ___, přeji ti hodně štěstí u zkoušky z češtiny.",
+      "options": [
+        "kamaráde",
+        "kamarád",
+        "kamarádu"
+      ],
+      "correct": 0,
+      "explanation": "Přídavné jméno a podstatné jméno v 5. pádě: 'Milý kamaráde!'.",
+      "prep": "kamaráde"
+    },
+    {
+      "prompt": "Dobrý večer, pane ___, váš stůl je připraven.",
+      "options": [
+        "vrchní",
+        "vrchního",
+        "vrchním"
+      ],
+      "correct": 0,
+      "explanation": "Oslovení 'pane vrchní' (přídavné jméno měkké).",
+      "prep": "vrchní"
+    },
+    {
+      "prompt": "Ahoj ___, půjdeš dnes večer do kina?",
+      "options": [
+        "Lenko",
+        "Lenka",
+        "Lenku"
+      ],
+      "correct": 0,
+      "explanation": "Vokativ pro ženské jméno Lenka: 'Lenko!'.",
+      "prep": "Lenko"
+    },
+    {
+      "prompt": "Vážený pane ___, posílám Vám požadované dokumenty.",
+      "options": [
+        "profesore",
+        "profesor",
+        "profesorem"
+      ],
+      "correct": 0,
+      "explanation": "Vokativ pro akademický titul: 'pane profesore!'.",
+      "prep": "profesore"
+    },
+    {
+      "prompt": "Maminko a ___, děkuji vám za všechno.",
+      "options": [
+        "tatínku",
+        "tatínek",
+        "tatínkem"
+      ],
+      "correct": 0,
+      "explanation": "Oslovení v rodině: 'tatínku!' (5. pád Vokativ).",
+      "prep": "tatínku"
+    },
+    {
+      "prompt": "Dobrý den, paní ___, jak se vám dnes daří?",
+      "options": [
+        "doktorko",
+        "doktorka",
+        "doktorkou"
+      ],
+      "correct": 0,
+      "explanation": "Oslovení lékařky: 'paní doktorko!' (5. pád).",
+      "prep": "doktorko"
+    }
+  ],
+  "6": [
+    {
+      "prompt": "Už pět let bydlím a pracuji ___ Praze.",
+      "options": [
+        "v",
+        "do",
+        "na"
+      ],
+      "correct": 0,
+      "explanation": "Předložka V/VE se v 6. pádě (Lokál) pojí se statickou polohou uvnitř města: 'v Praze' (Kde?).",
+      "prep": "v"
+    },
+    {
+      "prompt": "Na schůzce jsme dlouho mluvili ___ nové práci.",
+      "options": [
+        "o",
+        "na",
+        "pro"
+      ],
+      "correct": 0,
+      "explanation": "Předložka O se pojí s 6. pádem (Lokál) ve významu tématu hovoru: 'o nové práci'.",
+      "prep": "o"
+    },
+    {
+      "prompt": "Kolega teď čeká dole ___ poštovním úřadě.",
+      "options": [
+        "na",
+        "v",
+        "u"
+      ],
+      "correct": 0,
+      "explanation": "Předložka NA se s institucemi (pošta, úřad) pojí v 6. pádě: 'na poštovním úřadě'.",
+      "prep": "na"
+    },
+    {
+      "prompt": "Rád se procházím večer ___ starém městě.",
+      "options": [
+        "po",
+        "v",
+        "přes"
+      ],
+      "correct": 0,
+      "explanation": "Předložka PO se v 6. pádě (Lokál) užívá pro pohyb po ploše: 'po starém městě'.",
+      "prep": "po"
+    },
+    {
+      "prompt": "___ vstupu do budovy musíte předložit svůj průkaz.",
+      "options": [
+        "Při",
+        "V",
+        "O"
+      ],
+      "correct": 0,
+      "explanation": "Předložka PŘI se pojí s 6. pádem (Lokál) pro souběžnost dějů: 'při vstupu do budovy'.",
+      "prep": "Při"
+    },
+    {
+      "prompt": "Knihy mám uložené ___ pracovním stole.",
+      "options": [
+        "na",
+        "v",
+        "k"
+      ],
+      "correct": 0,
+      "explanation": "Poloha na povrchu (Kde?): NA + 6. pád: 'na pracovním stole'.",
+      "prep": "na"
+    },
+    {
+      "prompt": "Učíme se česky ___ moderní jazykové škole.",
+      "options": [
+        "v",
+        "na",
+        "do"
+      ],
+      "correct": 0,
+      "explanation": "Poloha v instituci: V + 6. pád: 'v moderní jazykové škole'.",
+      "prep": "v"
+    },
+    {
+      "prompt": "Dědeček nám vyprávěl příběhy ___ svém dětství.",
+      "options": [
+        "o",
+        "po",
+        "při"
+      ],
+      "correct": 0,
+      "explanation": "Téma vyprávění: O + 6. pád: 'o svém dětství'.",
+      "prep": "o"
+    },
+    {
+      "prompt": "Během víkendu jsme cestovali ___ celé České republice.",
+      "options": [
+        "po",
+        "v",
+        "na"
+      ],
+      "correct": 0,
+      "explanation": "Pohyb po území: PO + 6. pád: 'po celé České republice'.",
+      "prep": "po"
+    },
+    {
+      "prompt": "___ vaření vždy poslouchám český rozhlas.",
+      "options": [
+        "Při",
+        "O",
+        "Na"
+      ],
+      "correct": 0,
+      "explanation": "Doprovodná činnost: PŘI + 6. pád: 'Při vaření'.",
+      "prep": "Při"
+    },
+    {
+      "prompt": "Moje rodina bydlí ___ hezkém rodinném domě.",
+      "options": [
+        "v",
+        "na",
+        "u"
+      ],
+      "correct": 0,
+      "explanation": "Uvnitř stavby: V + 6. pád: 'v hezkém rodinném domě'.",
+      "prep": "v"
+    },
+    {
+      "prompt": "Byli jsme na obědě ___ italské restauraci.",
+      "options": [
+        "v",
+        "na",
+        "do"
+      ],
+      "correct": 0,
+      "explanation": "Lokace v podniku: V + 6. pád: 'v italské restauraci'.",
+      "prep": "v"
+    },
+    {
+      "prompt": "Četl jsem zajímavý článek ___ české historii.",
+      "options": [
+        "o",
+        "po",
+        "při"
+      ],
+      "correct": 0,
+      "explanation": "Téma článku: O + 6. pád (Lokál): 'o české historii'.",
+      "prep": "o"
+    },
+    {
+      "prompt": "Potkáme se odpoledne ___ hlavním nádraží.",
+      "options": [
+        "na",
+        "v",
+        "do"
+      ],
+      "correct": 0,
+      "explanation": "Nádraží se tradičně pojí s předložkou NA v 6. pádě: 'na hlavním nádraží'.",
+      "prep": "na"
+    },
+    {
+      "prompt": "___ ukončení kurzu obdrží každý student certifikát.",
+      "options": [
+        "Po",
+        "V",
+        "O"
+      ],
+      "correct": 0,
+      "explanation": "Časový následník: PO + 6. pád: 'Po ukončení kurzu'.",
+      "prep": "Po"
+    }
+  ],
+  "7": [
+    {
+      "prompt": "Do kina jdu zítra večer ___ svým kamarádem.",
+      "options": [
+        "se",
+        "k",
+        "pro"
+      ],
+      "correct": 0,
+      "explanation": "Předložka S/SE vyjadřuje doprovod s 7. pádem (Instrumentál): 'se svým kamarádem'.",
+      "prep": "se"
+    },
+    {
+      "prompt": "Naše auto stojí zaparkované ___ naším domem.",
+      "options": [
+        "před",
+        "u",
+        "do"
+      ],
+      "correct": 0,
+      "explanation": "Předložka PŘED se pojí se 7. pádem (Instrumentál) při určení polohy: 'před naším domem'.",
+      "prep": "před"
+    },
+    {
+      "prompt": "Zahrada s bazénem leží hned ___ novým domem.",
+      "options": [
+        "za",
+        "k",
+        "pro"
+      ],
+      "correct": 0,
+      "explanation": "Předložka ZA se pojí se 7. pádem (Kde?): 'za novým domem'.",
+      "prep": "za"
+    },
+    {
+      "prompt": "Kočka spí klidně ___ tímto dřevěným stolem.",
+      "options": [
+        "pod",
+        "na",
+        "v"
+      ],
+      "correct": 0,
+      "explanation": "Předložka POD se v 7. pádě pojí s polohou dole: 'pod stolem'.",
+      "prep": "pod"
+    },
+    {
+      "prompt": "Na stěně ___ mou postelí visí hezký obraz.",
+      "options": [
+        "nad",
+        "před",
+        "s"
+      ],
+      "correct": 0,
+      "explanation": "Předložka NAD se pojí se 7. pádem (Instrumentál): 'nad mou postelí'.",
+      "prep": "nad"
+    },
+    {
+      "prompt": "Seděl jsem v letadle ___ dvěma příjemnými cizinci.",
+      "options": [
+        "mezi",
+        "před",
+        "s"
+      ],
+      "correct": 0,
+      "explanation": "Předložka MEZI se pojí se 7. pádem při poloze uprostřed dvou entit: 'mezi dvěma cizinci'.",
+      "prep": "mezi"
+    },
+    {
+      "prompt": "Piju černý čaj vždy ___ čerstvým citronem.",
+      "options": [
+        "s",
+        "bez",
+        "pro"
+      ],
+      "correct": 0,
+      "explanation": "Doprovodná ingredience: S + 7. pád: 's čerstvým citronem'.",
+      "prep": "s"
+    },
+    {
+      "prompt": "Cestuji do zaměstnání městským ___ každé ráno.",
+      "options": [
+        "autobusem",
+        "s autobusem",
+        "o autobusu"
+      ],
+      "correct": 0,
+      "explanation": "Dopravní prostředek je v 7. pádě BEZ PŘEDLOŽKY: 'cestuji autobusem'.",
+      "prep": "autobusem"
+    },
+    {
+      "prompt": "Mluvili jsme o tom dlouho ___ panem ředitelem.",
+      "options": [
+        "s",
+        "k",
+        "za"
+      ],
+      "correct": 0,
+      "explanation": "Společné jednání s osobou: S + 7. pád: 's panem ředitelem'.",
+      "prep": "s"
+    },
+    {
+      "prompt": "Schovali jsme se před deštěm ___ velkým stromem.",
+      "options": [
+        "pod",
+        "nad",
+        "s"
+      ],
+      "correct": 0,
+      "explanation": "Krytí pod něčím: POD + 7. pád: 'pod velkým stromem'.",
+      "prep": "pod"
+    },
+    {
+      "prompt": "Lampa visí přímo ___ jídelním stolem.",
+      "options": [
+        "nad",
+        "za",
+        "s"
+      ],
+      "correct": 0,
+      "explanation": "Předložka NAD + 7. pád: 'nad jídelním stolem'.",
+      "prep": "nad"
+    },
+    {
+      "prompt": "Rozdělil jídlo rovnoměrně ___ všemi dětmi.",
+      "options": [
+        "mezi",
+        "před",
+        "nad"
+      ],
+      "correct": 0,
+      "explanation": "Distribuce MEZI + 7. pád množného čísla: 'mezi všemi dětmi'.",
+      "prep": "mezi"
+    },
+    {
+      "prompt": "Můj syn rád píše tímto modrým ___ .",
+      "options": [
+        "perem",
+        "s perem",
+        "o peru"
+      ],
+      "correct": 0,
+      "explanation": "Nástroj / instrument v 7. pádě je BEZ předložky: 'píše perem'.",
+      "prep": "perem"
+    },
+    {
+      "prompt": "Setkáme se za deset minut ___ hlavním vchodem.",
+      "options": [
+        "před",
+        "u",
+        "k"
+      ],
+      "correct": 0,
+      "explanation": "Místo setkání před objektem: PŘED + 7. pád: 'před hlavním vchodem'.",
+      "prep": "před"
+    },
+    {
+      "prompt": "Ráda si povídám u kávy ___ svou nejlepší kamarádkou.",
+      "options": [
+        "se",
+        "pro",
+        "k"
+      ],
+      "correct": 0,
+      "explanation": "Společnost osoby: SE + 7. pád: 'se svou nejlepší kamarádkou'.",
+      "prep": "se"
+    }
+  ]
+};
+
+let currentPrepCase = 2; // Default to Genitive
+let currentPrepIndex = 0;
+let hasAnsweredPrep = false;
+
+function selectPrepCase(cNum) {
+  currentPrepCase = cNum;
+  currentPrepIndex = 0;
+  document.querySelectorAll(".prep-case-pill").forEach(pill => {
+    const num = parseInt(pill.getAttribute("data-case"), 10);
+    pill.classList.toggle("active", num === cNum);
+  });
+  renderPrepQuestion();
+}
+
+function renderPrepQuestion() {
+  const list = PREPOSITION_QUESTIONS[currentPrepCase] || [];
+  if (list.length === 0) return;
+  if (currentPrepIndex >= list.length) currentPrepIndex = 0;
+
+  const q = list[currentPrepIndex];
+  hasAnsweredPrep = false;
+
+  const card = document.getElementById("prep-quiz-card");
+  if (!card) return;
+
+  const caseNames = {
+    1: "1. Nominativ (Bez předložky / Podmět)",
+    2: "2. Genitiv (do, od, z, bez, u, vedle, během)",
+    3: "3. Dativ (k, díky, proti, naproti, kvůli)",
+    4: "4. Akuzativ (na, pro, za, o, přes)",
+    5: "5. Vokativ (Oslovení a tituly)",
+    6: "6. Lokál (v, na, o, po, při)",
+    7: "7. Instrumentál (s/se, před, za, pod, nad, mezi)"
+  };
+
+  let optionsHtml = "";
+  q.options.forEach((opt, idx) => {
+    optionsHtml += `
+      <button class="btn-option prep-opt" id="prep-opt-${idx}" onclick="handlePrepOptionClick(${idx})">
+        ${opt}
+      </button>
+    `;
+  });
+
+  card.innerHTML = `
+    <div class="question-header">
+      <span class="badge" style="background: #E8F5E9; color: #2E7D32; border: 1px solid #A5D6A7;">
+        ${caseNames[currentPrepCase] || "Předložky"}
+      </span>
+      <span style="font-size: 12px; font-weight: 700; color: var(--gray);">Cvičení ${currentPrepIndex + 1} z ${list.length}</span>
+    </div>
+    <div class="sentence-prompt" style="font-size: 17px; margin: 14px 0;">${q.prompt}</div>
+    <div class="options-grid" style="grid-template-columns: repeat(3, 1fr);">
+      ${optionsHtml}
+    </div>
+    <div id="prep-feedback-box" style="display: none; margin-top: 12px;"></div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px; flex-wrap: wrap; gap: 8px;">
+      <button class="speak-btn" onclick="speakCzech('${q.prompt.replace("___", "...").replace(/'/g, "\\x27")}')">🔊 Poslech věty</button>
+      <button id="prep-next-btn" style="display: none; background: #2E7D32; color: white; border: none; padding: 10px 18px; border-radius: 10px; font-weight: 700; cursor: pointer;" onclick="nextPrepQuestion()">Další cvičení (${currentPrepIndex + 2 <= list.length ? currentPrepIndex + 2 : 1}/${list.length}) ➔</button>
+    </div>
+  `;
+}
+
+function handlePrepOptionClick(index) {
+  if (hasAnsweredPrep) return;
+  hasAnsweredPrep = true;
+
+  const list = PREPOSITION_QUESTIONS[currentPrepCase] || [];
+  const q = list[currentPrepIndex];
+  const isCorrect = index === q.correct;
+  const chosenBtn = document.getElementById("prep-opt-" + index);
+  const correctBtn = document.getElementById("prep-opt-" + q.correct);
+  const feedbackBox = document.getElementById("prep-feedback-box");
+  const nextBtn = document.getElementById("prep-next-btn");
+
+  exercisesAnswered++;
+  localStorage.setItem("czech_exercises", exercisesAnswered);
+
+  if (isCorrect) {
+    score += 10;
+    localStorage.setItem("czech_score", score);
+    if (chosenBtn) chosenBtn.classList.add("correct");
+    speakCzech("Výborně! Správná předložka.");
+    feedbackBox.innerHTML = `
+      <div style="background: var(--success-bg); color: var(--success); padding: 10px 14px; border-radius: 10px; font-size: 13px; font-weight: 600;">
+        ✓ Správně! <strong>${q.options[q.correct]}</strong><br>${q.explanation}
+      </div>
+    `;
+  } else {
+    if (chosenBtn) chosenBtn.classList.add("incorrect");
+    if (correctBtn) correctBtn.classList.add("correct");
+    speakCzech("Pozor, tady patří jiná předložka.");
+    feedbackBox.innerHTML = `
+      <div style="background: var(--error-bg); color: var(--error); padding: 10px 14px; border-radius: 10px; font-size: 13px; font-weight: 600;">
+        ✗ Chyba. Správná předložka je: <strong>${q.options[q.correct]}</strong>.<br>${q.explanation}
+      </div>
+    `;
+  }
+
+  feedbackBox.style.display = "block";
+  if (nextBtn) nextBtn.style.display = "inline-block";
+}
+
+function nextPrepQuestion() {
+  const list = PREPOSITION_QUESTIONS[currentPrepCase] || [];
+  currentPrepIndex = (currentPrepIndex + 1) % list.length;
+  renderPrepQuestion();
+}

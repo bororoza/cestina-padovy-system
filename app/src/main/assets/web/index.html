@@ -107,16 +107,40 @@
       </div>
     </section>
 
-    <!-- TAB 4: PŘEDLOŽKY A CHECKLIST -->
+    <!-- TAB 4: PŘEDLOŽKY A CVIČENÍ -->
     <section id="tab-checklist" class="tab-content">
+      <!-- Preposition Case Selector -->
+      <div class="card" style="margin-bottom: 12px; padding: 12px 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+          <h2 style="font-size: 15px; font-weight: 800; color: #2E7D32;">🎯 Cvičení na předložky (15 otázek na pád)</h2>
+        </div>
+        <p style="font-size: 12.5px; color: #555; margin-bottom: 10px;">
+          Doplňte do věty správnou předložku ze tří nabízených možností. Pouze 1 odpověď je správná:
+        </p>
+        <div class="case-pills">
+          <div class="case-pill prep-case-pill" data-case="1" onclick="selectPrepCase(1)">1. Nominativ</div>
+          <div class="case-pill prep-case-pill active" data-case="2" onclick="selectPrepCase(2)">2. Genitiv</div>
+          <div class="case-pill prep-case-pill" data-case="3" onclick="selectPrepCase(3)">3. Dativ</div>
+          <div class="case-pill prep-case-pill" data-case="4" onclick="selectPrepCase(4)">4. Akuzativ</div>
+          <div class="case-pill prep-case-pill" data-case="5" onclick="selectPrepCase(5)">5. Vokativ</div>
+          <div class="case-pill prep-case-pill" data-case="6" onclick="selectPrepCase(6)">6. Lokál</div>
+          <div class="case-pill prep-case-pill" data-case="7" onclick="selectPrepCase(7)">7. Instrumentál</div>
+        </div>
+      </div>
+
+      <!-- Preposition Quiz Card -->
+      <div class="card" id="prep-quiz-card" style="margin-bottom: 16px;">
+        <!-- Dynamically populated by JS renderPrepQuestion() -->
+      </div>
+
       <div class="card">
-        <h2 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">📋 Pravidla a předložky pro zkoušku A2</h2>
+        <h2 style="font-size: 16px; font-weight: 800; margin-bottom: 12px;">📋 Přehled předložek pro zkoušku A2</h2>
         
         <div class="checklist-item">
           <input type="checkbox" id="c1" checked>
           <div>
             <div class="checklist-title">2. Pád (Genitiv)</div>
-            <div class="checklist-desc">Předložky: do, od, z, bez, u, vedle, během</div>
+            <div class="checklist-desc">Předložky: do, od, z, bez, u, vedle, během, blízko, kolem</div>
           </div>
         </div>
 
@@ -132,7 +156,7 @@
           <input type="checkbox" id="c3" checked>
           <div>
             <div class="checklist-title">4. Pád (Akuzativ)</div>
-            <div class="checklist-desc">Předložky: na, pro, za, o, v (pohyb, cíl)</div>
+            <div class="checklist-desc">Předložky: na, pro, za, o, v (pohyb, cíl), přes</div>
           </div>
         </div>
 
@@ -140,7 +164,7 @@
           <input type="checkbox" id="c4" checked>
           <div>
             <div class="checklist-title">6. Pád (Lokál)</div>
-            <div class="checklist-desc">VŽDY s předložkou: v/ve, na, o, po, při</div>
+            <div class="checklist-desc">VŽDY s předložkou: v/ve, na, o, po, při (poloha, téma)</div>
           </div>
         </div>
 
@@ -148,7 +172,7 @@
           <input type="checkbox" id="c5" checked>
           <div>
             <div class="checklist-title">7. Pád (Instrumentál)</div>
-            <div class="checklist-desc">Předložky: s/se, před, za, pod, nad, mezi</div>
+            <div class="checklist-desc">Předložky: s/se (doprovod), před, za, pod, nad, mezi (dopravní prostředky BEZ předložky!)</div>
           </div>
         </div>
       </div>
